@@ -1,8 +1,8 @@
 import "./App.scss";
 import React, { useEffect, useState } from "react";
-
+import io from 'socket.io-client';
 import axios from "axios";
-
+import data from "./message.json";
 function User({ data, onClick }) {
   const { first_name, last_name, email, avatar } = data;
   const Online = true;
@@ -21,19 +21,19 @@ function User({ data, onClick }) {
   );
 }
 
-function Header({user}) {
-  
-  if(user){
-    const { first_name, last_name, email, avatar,address} = user;
+function Header({ user }) {
+  if (user) {
+    const { first_name, last_name, email, avatar, address } = user;
     return (
       <header>
-        <img
-          src={avatar.replace("=set1", "=set5")}
-          alt=""
-        />
+        <img src={avatar.replace("=set1", "=set5")} alt="" />
         <div>
-          <h2>{first_name} {last_name}</h2>
-          <h3>Address: {address.street_address} - {address.city} </h3>
+          <h2>
+            {first_name} {last_name}
+          </h2>
+          <h3>
+            Address: {address.street_address} - {address.city}{" "}
+          </h3>
         </div>
       </header>
     );
@@ -48,11 +48,65 @@ function Header({user}) {
   );
 }
 
+function Message(props) {
+  const date = new Date(props.Date);
+  return (
+    <li className={props.Author}>
+      <div className="entete">
+        <h3>
+          {props.Author}: {date.toUTCString()}
+        </h3>
+      </div>
+      <div className="message">{props.children}</div>
+    </li>
+  );
+}
+
+function Chat() {
+  return (
+    <ul id="chat">
+      {data.Messages.map((el, index) => {
+        return (
+          <Message
+            Author={el.AuthorID == 1 ? "me" : "other"}
+            Date={el.Date}
+            key={index}
+          >
+            {el.Message}
+          </Message>
+        );
+      })}
+    </ul>
+  );
+}
+
+function Footer({onSubmit}) {
+  return (
+    <footer>
+      <form onSubmit={(e)=>{
+        e.preventDefault()
+        onSubmit(e.target[0].value)
+        e.target[0].value = null
+      }} >
+        <input placeholder="Type your message"></input>
+        <button type="submit" >
+          <img src="./paper-plane-solid.svg" alt="svg" />
+        </button>
+      </form>
+    </footer>
+  );
+}
+
+
+
+
 
 function App() {
+const socket = io("http://localhost:4000");
+  const [isConnected, setIsConnected] = useState(socket.connected);
   const [user, setUser] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [SelectedUser,SetSelectedUser]=useState(null)
+  const [SelectedUser, SetSelectedUser] = useState(null);
   useEffect(() => {
     async function fetchMyAPI() {
       let response = await axios(
@@ -63,9 +117,25 @@ function App() {
       setIsLoaded(true);
     }
 
-    fetchMyAPI();
+    //fetchMyAPI();
   }, []);
+  const [time, setTime] = useState('fetching')  
+  useEffect(()=>{
+    const socket = io('http://localhost:4000')    
+    socket.on('connect', ()=>console.log(socket.id))
+    socket.on('connect_error', ()=>{
+      setTimeout(()=>socket.connect(),4000)
+    })   
+    socket.on('time', (data)=>setTime(data))
+   socket.on('disconnect',()=>setTime('server disconnected'))
+ 
+ },[])
+  
 
+
+const onSubmit = (e)=>{
+console.log(e)
+}
   return (
     <div className="App">
       <div id="container">
@@ -88,66 +158,9 @@ function App() {
           </ul>
         </aside>
         <main>
-          <Header user={SelectedUser}/>
-          <ul id="chat">
-            <li className="you">
-              <div className="entete">
-                <h3>Vincent: 10:12 AM, Today</h3>
-              </div>
-              <div className="message">
-                Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
-                commodo ligula eget dolor.
-              </div>
-            </li>
-            <li className="me">
-              <div className="entete">
-                <h3>10:15 AM, Today</h3>
-              </div>
-              <div className="message">
-                Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
-                commodo ligula eget dolor.
-              </div>
-            </li>
-            <li className="me">
-              <div className="entete">
-                <h3>10:12 AM, Today</h3>
-              </div>
-              <div className="message">OK</div>
-            </li>
-            <li className="you">
-              <div className="entete">
-                <h3>Vincent: 10:12 AM, Today</h3>
-              </div>
-              <div className="message">
-                Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
-                commodo ligula eget dolor.
-              </div>
-            </li>
-            <li className="me">
-              <div className="entete">
-                <h3>10:12 AM, Today</h3>
-              </div>
-              <div className="message">
-                Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
-                commodo ligula eget dolor.
-              </div>
-            </li>
-            <li className="me">
-              <div className="entete">
-                <h3>10:12 AM, Today</h3>
-              </div>
-              <div className="message">OK</div>
-            </li>
-          </ul>
-          <footer>
-            <input placeholder="Type your message"></input>
-            <button type="button">
-                  
-<img src='./paper-plane-solid.svg' alt="svg" />
-
-
-            </button>
-          </footer>
+          <Header user={SelectedUser} />
+          <Chat />
+          <Footer onSubmit={onSubmit}/>
         </main>
       </div>
     </div>
