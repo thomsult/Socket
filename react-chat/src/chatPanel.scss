@@ -9,55 +9,45 @@ body {
   
 }
 .App {
-  padding: 1em;
   height: 100vh;
   width: 100vw;
-  display: flex;
   align-items: center;
   justify-content: center;
-}
-#container {
   display: flex;
+  padding: 1em;
+}
 
+#container {
+  position: relative;
   height: 100%;
-  margin: 0 auto;
-  font-size: 0;
- 
-  border-radius: 5em;
+  width: 100%;
+  display: flex;
+  border-radius: 1em;
+  
 }
 
 main {
-  background: #eff3f7;
+  
   border-radius: 1em;
-  height: 100%;
   display: flex;
   flex-direction: column;
-  
-  font-size: 15px;
+  width: 100%;
 }
 
-
-
-
-
-
-
-
 aside {
-  transition: width 1s ease;
-  
-  display: flex;
-  flex-direction: column;
+  border-right: rgb(209, 209, 209) solid 1px;
+  max-width: 400px;
   width: 0;
+  flex-direction: column;
+  border-radius: 1em;
+  overflow: hidden;
   height: 100%;
   padding-bottom: 1em;
   background-color: #3b3e49;
-  font-size: 15px;
-  border-bottom-left-radius: 1em;
-  border-top-left-radius: 1em;
 
   & > header {
     padding: 30px 20px;
+    
   }
 
   & > header > input {
@@ -113,17 +103,14 @@ aside {
   flex-direction: column;
 }
 & > ul> li h2 {
-  font-size: 14px;
   color: #fff;
   font-weight: normal;
 }
 & > ul> li div small {
 
-  font-size: 10px;
   color: rgb(163, 163, 163);
 }
 & > ul> li h3 {
-  font-size: 12px;
   color: #7e818a;
   font-weight: normal;
 }}
@@ -149,11 +136,11 @@ aside {
 main header {
   padding: 30px 20px 30px 40px;
   background-color: #3b3e49;
-  border-left: 1px solid rgb(104, 104, 104);
-  border-radius: 1em 1em 0 0;
+  
   height: 12em;
   max-height: 12em;
   display: flex;
+  border-radius: 1em 1em 0 0;
 }
 
 main header img:first-child {
@@ -179,20 +166,19 @@ main header h3 {
 
 
 #chat {
-
+  background: #eff3f7;
 overflow-x: hidden;
 overflow-y: scroll;
   list-style-type: none;
-  border-top: 2px solid #fff;
   border-bottom: 2px solid #fff;
   flex-grow: 1;
+  
 }
 #chat li {
   padding: 10px 30px;
 }
 #chat h2,
 #chat h3 {
-  font-size: 13px;
   font-weight: normal;
   color: #bbb;
 }
@@ -263,7 +249,6 @@ main footer form {
 
   border-radius: 3px;
   padding-left: 1em;
-  font-size: 13px;
 }
 &> button {
   background-color: transparent;
@@ -282,13 +267,42 @@ main footer form {
   }
 }
 }
-@media screen and (min-width: 640px) {
+
+.custom-handle {
+  position: absolute;
+  width: 10px;
+  height: 100%;
+  background-color: #5e5e5e;
+  opacity: 0;
+  cursor: e-resize;
+}
+
+.custom-handle-se {
+  bottom: 0;
+  right: 0;
+  display: none;
+}
+@media screen and (min-width:1000px) {
   aside{
-    width: 500px;
-  }main{
-    border-radius: 0 1em 1em 0;
-  }
-  main header{
-    border-radius: 0 1em 0 0;
+    max-width: 500px;
+    width: 100%;
+    border-radius: 1em 0 0 1em;
+ }
+ main{
+  min-width: 500px;
+  width: 100%;
+  border-radius: 1em 1em 1em 1em;
+  
+ }
+ main>header{
+  border-radius: 1em 1em 0 0;
+  
+ }
+ #container {
+  background: linear-gradient(180deg,#3b3e49, #fff);
+}
+ 
+  .custom-handle-se {
+    display: block;
   }
 }
